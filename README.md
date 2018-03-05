@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/logo.svg" alt="Maxima.jl"/>
+  <img height="150" src="./assets/logo.svg" alt="plumb"/>
 </p>
 
 # Plumb - Automated, Interactive ETL for Go

@@ -2,13 +2,8 @@
   <img height="150" src="./assets/logo.svg" alt="plumb"/>
 </p>
 
-# Plumb
-
-**Interactive ETL Pipelines in Go**
-
-| **Documentation**           | **Build Status**            |
-|:---------------------------:|:---------------------------:|
-|[![GoDoc](https://godoc.org/github.com/nsmith5/plumb?status.svg)](https://godoc.org/github.com/nsmith5/plumb)|[![Build Status](https://travis-ci.org/nsmith5/plumb.svg?branch=master)](https://travis-ci.org/nsmith5/plumb)|
+# Plumb - Interactive ETL Pipelines in Go
+[![GoDoc](https://godoc.org/github.com/nsmith5/plumb?status.svg)](https://godoc.org/github.com/nsmith5/plumb)[![Build Status](https://travis-ci.org/nsmith5/plumb.svg?branch=master)](https://travis-ci.org/nsmith5/plumb)|
 
 Plumb is a pipeline library for Go. The goal is to build an interactive
 pipeline manager that can grow and shrink queues on demand and replicate 

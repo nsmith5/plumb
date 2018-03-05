@@ -23,72 +23,88 @@ import (
 
 // Process is a function
 type Process struct {
-	reflect.Value // A reflect Function
-	in            []Channel
-	out           []Channel
-	done          chan struct{} // Global kill channel
-	workers       int
+	F       reflect.Value // A reflect Function
+	In      []Channel
+	Out     []Channel
+	Done    chan struct{} // Global kill channel
+	Workers int
 }
 
 // NewProcess creates a process from a function
-func NewProcess(f interface{}) (Process, error) {
+func NewProcess(f interface{}) (p Process, err error) {
 	t := reflect.TypeOf(f)
-	v := reflect.ValueOf(f)
-
 	if t.Kind() != reflect.Func {
-		return Process{}, errors.New("f must be a function")
+		err = errors.New("f must by a function. Supplied " + t.String())
+		return
 	}
 
-	// Make input channel
-	in := make([]Channel, t.NumIn())
+	p.F = reflect.ValueOf(f)
+	// Init input channels
 	for i := 0; i < t.NumIn(); i++ {
 		c := NewChannel(t.In(i), 1)
-		in = append(in, c)
+		p.In = append(p.In, c)
 	}
-
-	// Make output channels
-	out := make([]Channel, 0)
+	// Init output channels
 	for j := 0; j < t.NumOut(); j++ {
 		c := NewChannel(t.Out(j), 1)
-		out = append(out, c)
+		p.Out = append(p.Out, c)
 	}
 
-	done := make(chan struct{})
-	return Process{v, in, out, done, 0}, nil
+	p.Done = make(chan struct{})
+	p.Workers = 0
+	return
 }
 
-// Run spawn a worker for this process. Can by called
+// recv aggragates receiving from all input channels
+func (p *Process) recv() ([]reflect.Value, bool) {
+	var allOk, ok bool
+	inputs := make([]reflect.Value, p.F.Type().NumIn())
+
+	for i := range inputs {
+		inputs[i], ok = p.In[i].Recv()
+		allOk = ok || allOk
+	}
+
+	return inputs, allOk
+}
+
+// send aggregates outputs and sends them on their
+// respective output channels
+func (p *Process) send(outputs []reflect.Value) {
+	for i, output := range outputs {
+		p.Out[i].Send(output)
+	}
+}
+
+// Run spawns a worker for this process. Can by called
 // as many times as you which to scale up the Process
 func (p *Process) Run() {
-	p.workers++
+	p.Workers++
 	go func() {
-		inputs := make([]reflect.Value, p.Type().NumIn())
-		outputs := make([]reflect.Value, p.Type().NumOut())
+		var inputs, outputs []reflect.Value
 		var ok bool
 
 		for {
 			select {
-			case <-p.done:
-				p.workers--
+			// If there is a kill signal in the
+			// Done channel, decrement Workers and
+			// get out.
+			case <-p.Done:
+				p.Workers--
 				return
+
+			// This is the normal course of action:
+			// (1) Receive all arguments
+			// (2) Run computation
+			// (3) Distribute outputs
 			default:
-				// Read input from input channels
-				for i := range inputs {
-					inputs[i], ok = p.in[i].Recv()
-					if ok == false {
-						// TODO: Propagate the closure to output channels?
-						p.workers--
-						return
-					}
+				inputs, ok = p.recv()
+				if !ok {
+					_ = ok
+					// TODO: What should happen here?
 				}
-
-				// Compute
-				outputs = p.Call(inputs)
-
-				// Distribute output to output channels
-				for j, output := range outputs {
-					p.out[j].Send(output)
-				}
+				outputs = p.F.Call(inputs)
+				p.send(outputs)
 			}
 		}
 	}()
@@ -97,23 +113,23 @@ func (p *Process) Run() {
 // NumWorkers returns the number of worker in this
 // Process
 func (p *Process) NumWorkers() int {
-	return p.workers
+	return p.Workers
 }
 
 // SetWorkers scales or shrinks the number of workers
 // running this Process
 func (p *Process) SetWorkers(target int) {
-	for p.workers < target {
+	for p.Workers < target {
 		p.Run()
 	}
-	for p.workers > target {
-		p.done <- struct{}{}
+	for p.Workers > target {
+		p.Done <- struct{}{}
 	}
 }
 
 // Connect links the i'th output of p to the j'th input
 // of pr
 func (p *Process) Connect(pr *Process, i, j int) {
-	pr.in[j] = p.out[i]
+	pr.In[j] = p.Out[i]
 	return
 }

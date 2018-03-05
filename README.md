@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/logo.svg" alt="Maxima.jl"/>
+</p>
+
 # Plumb - Automated, Interactive ETL for Go
 
 [![Build Status](https://travis-ci.org/nsmith5/plumb.svg?branch=master)](https://travis-ci.org/nsmith5/plumb)

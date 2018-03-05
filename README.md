@@ -1,5 +1,7 @@
 # Plumb - Automated, Interactive ETL for Go
 
+[![Build Status](https://travis-ci.org/nsmith5/plumb.svg?branch=master)](https://travis-ci.org/nsmith5/plumb)
+
 Plumb is a pipeline library for Go. The goal is to build an interactive
 pipeline manager that can grow and shrink queues on demand and replicate 
 processing stages on demand. Pipelines are a network of **Processes** and

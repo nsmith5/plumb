@@ -3,7 +3,7 @@
 </p>
 
 # Plumb - Interactive ETL Pipelines in Go
-[![GoDoc](godoc-img)](godoc-url) [![Build Status](travis-img)](travis-url)|
+[![GoDoc][godoc-img][godoc-url] [![Build Status][travis-img][travis-url]
 
 Plumb is a pipeline library for Go. The goal is to build an interactive
 pipeline manager that can grow and shrink queues on demand and replicate 

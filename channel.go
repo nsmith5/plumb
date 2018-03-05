@@ -22,5 +22,12 @@ import (
 
 // Channel is the basic connection between
 type Channel struct {
-	reflect.Value // Must be of type Chan
+	reflect.Value // Require Channel.Kind() == Chan
+}
+
+// NewChannel constructs a new Channel with buffer length
+// `buffer` and content type `t`.
+func NewChannel(t reflect.Type, buffer int) Channel {
+	ctype := reflect.ChanOf(reflect.BothDir, t)
+	return Channel{reflect.MakeChan(ctype, buffer)}
 }

@@ -47,5 +47,9 @@ func TestRun(t *testing.T) {
 	middle.Run()
 	snk.Run()
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(2 * time.Second)
+	middle.SetWorkers(2)
+	time.Sleep(2 * time.Second)
+	middle.SetWorkers(1)
+	time.Sleep(2 * time.Second)
 }

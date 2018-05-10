@@ -13,6 +13,8 @@ channels are used to stream arguments into a process and stream outputs
 to the next process. Plumb exposes a REST API to interact with and monitor
 these objects in real time. 
 
+Example text!
+
 [godoc-url]: https://godoc.org/github.com/nsmith5/plumb
 [godoc-img]: https://godoc.org/github.com/nsmith5/plumb?status.svg
 

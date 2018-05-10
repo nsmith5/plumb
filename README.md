@@ -11,7 +11,9 @@ processing stages on demand. Pipelines are a network of **Processes** and
 **Channels**. A process is basically a function running in a loop, while 
 channels are used to stream arguments into a process and stream outputs 
 to the next process. Plumb exposes a REST API to interact with and monitor
-these objects in real time. 
+these objects in real time.  
+
+Example of small change
 
 [godoc-url]: https://godoc.org/github.com/nsmith5/plumb
 [godoc-img]: https://godoc.org/github.com/nsmith5/plumb?status.svg
